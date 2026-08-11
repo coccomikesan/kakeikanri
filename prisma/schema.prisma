@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Category {
+  id           String        @id @default(cuid())
+  name         String
+  type         String // "INCOME" | "EXPENSE"
+  color        String?
+  costType     String? // "FIXED" | "VARIABLE"
+  transactions Transaction[]
+  budgets      Budget[]
+}
+
+model Transaction {
+  id         String   @id @default(cuid())
+  date       DateTime
+  amount     Int
+  type       String // "INCOME" | "EXPENSE"
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  memo       String?
+  settled    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Budget {
+  id         String   @id @default(cuid())
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  yearMonth  String // "2026-08"
+  amount     Int
+
+  @@unique([categoryId, yearMonth])
+}
+
+model MonthlyNote {
+  id        String   @id @default(cuid())
+  yearMonth String   @unique // "2026-08"
+  memo      String
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id        String          @id @default(cuid())
+  name      String
+  category  String          @default("LIQUID") // "LIQUID" | "RESTRICTED"
+  snapshots AssetSnapshot[]
+}
+
+model AssetSnapshot {
+  id        String   @id @default(cuid())
+  accountId String
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  date      DateTime
+  balance   Int
+}
