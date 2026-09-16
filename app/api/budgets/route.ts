@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
+  const prisma = await getPrisma();
   const searchParams = request.nextUrl.searchParams;
   const yearMonth = searchParams.get("yearMonth");
 
@@ -14,6 +15,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const prisma = await getPrisma();
   const body = await request.json();
   const { categoryId, yearMonth, amount } = body;
 

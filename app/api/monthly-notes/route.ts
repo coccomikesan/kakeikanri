@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
+  const prisma = await getPrisma();
   const yearMonth = request.nextUrl.searchParams.get("yearMonth");
   if (!yearMonth) {
     return Response.json({ error: "yearMonth は必須です" }, { status: 400 });
@@ -12,6 +13,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  const prisma = await getPrisma();
   const body = await request.json();
   const { yearMonth, memo } = body;
 

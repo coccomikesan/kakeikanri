@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 import { yearMonthRange } from "@/lib/format";
 
 export async function GET(request: NextRequest) {
+  const prisma = await getPrisma();
   const searchParams = request.nextUrl.searchParams;
   const yearMonth = searchParams.get("yearMonth");
   const categoryId = searchParams.get("categoryId");
@@ -29,6 +30,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const prisma = await getPrisma();
   const body = await request.json();
   const { date, amount, type, categoryId, memo, settled } = body;
 

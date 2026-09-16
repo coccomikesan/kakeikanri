@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { getPrisma } from "@/lib/prisma";
 
 export async function GET() {
+  const prisma = await getPrisma();
   const accounts = await prisma.account.findMany({
     include: { snapshots: { orderBy: { date: "asc" } } },
     orderBy: { name: "asc" },
@@ -10,6 +11,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const prisma = await getPrisma();
   const body = await request.json();
   const { name, category } = body;
 
